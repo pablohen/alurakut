@@ -105,7 +105,7 @@ export default function Home() {
           </Box>
 
           <Box>
-            <h2 className="subTitle">O que você desaja fazer?</h2>
+            <h2 className="subTitle">O que você deseja fazer?</h2>
 
             <form onSubmit={handleCriaComunidade}>
               <div>
