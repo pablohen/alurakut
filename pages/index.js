@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 import Box from '../src/components/Box';
 import MainGrid from '../src/components/MainGrid';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
@@ -142,14 +143,16 @@ export default function Home() {
             <ul>
               {comunidades.map(({ id, title, image }) => (
                 <li key={id}>
-                  <a href={`/comunidades/${title}`}>
-                    <img
-                      src={image}
-                      alt={title}
-                      style={{ borderRadius: '8px' }}
-                    />
-                    <span>{title}</span>
-                  </a>
+                  <Link href={`/comunidades/${title}`} passHref>
+                    <a>
+                      <img
+                        src={image}
+                        alt={title}
+                        style={{ borderRadius: '8px' }}
+                      />
+                      <span>{title}</span>
+                    </a>
+                  </Link>
                 </li>
               ))}
             </ul>
