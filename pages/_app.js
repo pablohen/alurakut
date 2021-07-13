@@ -1,10 +1,20 @@
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+  @keyframes voltaCor {
+    0% {
+      filter: grayscale(80%) sepia(15%) brightness(95%);
+    }
+    100% {
+      filter: none;
+    }
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    animation: 1.25s voltaCor;
   }
 
   body {
