@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Box from '../src/components/Box';
 import MainGrid from '../src/components/MainGrid';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
+import useSeguidores from '../hooks/useSeguidores';
 import {
   AlurakutMenu,
   AlurakutProfileSidebarMenuDefault,
@@ -24,6 +25,31 @@ const ProfileSidebar = ({ githubUser }) => {
       <hr />
       <AlurakutProfileSidebarMenuDefault />
     </Box>
+  );
+};
+
+const ProfileRelationsBox = ({ title, items }) => {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {title} ({items.length})
+      </h2>
+
+      <ul>
+        {items.reverse().map(({ id, login, avatar_url }) => (
+          <li key={id}>
+            <a href={`https://github.com/${login}`}>
+              <img
+                src={avatar_url}
+                alt={login}
+                style={{ borderRadius: '8px' }}
+              />
+              <span>{login}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </ProfileRelationsBoxWrapper>
   );
 };
 
@@ -62,6 +88,9 @@ export default function Home() {
     'marcobrunodev',
     'felipefialho',
   ];
+
+  const seguidores = useSeguidores(githubUser);
+  console.log(seguidores);
 
   const handleCriaComunidade = (e) => {
     e.preventDefault();
@@ -137,6 +166,8 @@ export default function Home() {
           className="profileRelationsArea"
           style={{ gridArea: 'profileRelationsArea' }}
         >
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
+
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
 
