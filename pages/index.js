@@ -9,6 +9,8 @@ import {
   AlurakutProfileSidebarMenuDefault,
   OrkutNostalgicIconSet,
 } from '../src/libs/AlurakutCommons';
+import useCommunities from '../hooks/useCommunities';
+import slugify from 'slugify';
 
 const ProfileSidebar = ({ githubUser }) => {
   return (
@@ -55,31 +57,8 @@ const ProfileRelationsBox = ({ title, items }) => {
 
 export default function Home() {
   const githubUser = 'pablohen';
-  const [comunidades, setComunidades] = useState([
-    {
-      id: 1,
-      title: 'Alurakut',
-      image:
-        'https://blog.b2bstack.com.br/wp-content/uploads/2021/03/alura.jpg',
-    },
-    {
-      id: 2,
-      title: 'Não era pote de sorvete...',
-      image: 'https://pbs.twimg.com/media/DLVOpctXcAEmDFn.jpg',
-    },
-    {
-      id: 3,
-      title: 'Sandy Júnior e Durval',
-      image:
-        'https://i.pinimg.com/originals/91/bb/f6/91bbf6aeabcce0aa854f6637f94154a7.jpg',
-    },
-    {
-      id: 4,
-      title: 'Fritas acompanha?',
-      image:
-        'https://pbs.twimg.com/profile_images/1592100104/Fritas-Acompanha-_400x400.png',
-    },
-  ]);
+  const [comunidades, setComunidades] = useCommunities();
+
   const pessoasFavoritas = [
     'juunegreiros',
     'omariosouto',
@@ -89,8 +68,7 @@ export default function Home() {
     'felipefialho',
   ];
 
-  const seguidores = useSeguidores(githubUser);
-  console.log(seguidores);
+  const [seguidores] = useSeguidores(githubUser);
 
   const handleCriaComunidade = (e) => {
     e.preventDefault();
@@ -98,15 +76,31 @@ export default function Home() {
 
     const id = new Date().toISOString();
     const title = dadosDoForm.get('title');
-    const image = dadosDoForm.get('image');
+    const imageUrl = dadosDoForm.get('imageUrl');
 
     const comunidade = {
-      id,
       title,
-      image,
+      imageUrl,
+      creatorSlug: slugify(title, { lower: true }),
     };
 
-    setComunidades([...comunidades, comunidade]);
+    const enviaDadosComunidade = async (comunidade) => {
+      try {
+        const res = await fetch('/api/communities', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(comunidade),
+        });
+        const novaComunidade = await res.json();
+        setComunidades([novaComunidade, ...comunidades]);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    enviaDadosComunidade(comunidade);
   };
 
   return (
@@ -150,7 +144,7 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Coloque uma URL para usarmos de capa"
-                  name="image"
+                  name="imageUrl"
                   aria-label="Coloque uma URL para usarmos de capa"
                 />
               </div>
@@ -172,12 +166,12 @@ export default function Home() {
             <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
 
             <ul>
-              {comunidades.map(({ id, title, image }) => (
+              {comunidades.map(({ id, title, imageUrl }) => (
                 <li key={id}>
-                  <Link href={`/comunidades/${title}`} passHref>
+                  <Link href={`/communities/${id}`} passHref>
                     <a>
                       <img
-                        src={image}
+                        src={imageUrl}
                         alt={title}
                         style={{ borderRadius: '8px' }}
                       />

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 const useSeguidores = (githubUser) => {
   const [seguidores, setSeguidores] = useState([]);
+  const [carregandoSeguidores, setCarregandoSeguidores] = useState(true);
 
   useEffect(() => {
     const fetchSeguidores = async () => {
@@ -14,12 +15,13 @@ const useSeguidores = (githubUser) => {
       } catch (error) {
         console.error(error.message);
       }
+      setCarregandoSeguidores(false);
     };
 
     fetchSeguidores();
   }, [githubUser]);
 
-  return seguidores;
+  return [seguidores, carregandoSeguidores];
 };
 
 export default useSeguidores;
