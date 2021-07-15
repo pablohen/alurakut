@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    animation: 1.25s voltaCor;
+    animation: 2.5s voltaCor;
   }
 
   body {
