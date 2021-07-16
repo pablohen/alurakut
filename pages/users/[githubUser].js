@@ -1,21 +1,24 @@
 import Link from 'next/link';
-import Box from '../src/components/Box';
-import MainGrid from '../src/components/MainGrid';
-import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
-import useSeguidores from '../hooks/useSeguidores';
+import Box from '../../src/components/Box';
+import MainGrid from '../../src/components/MainGrid';
+import { ProfileRelationsBoxWrapper } from '../../src/components/ProfileRelations';
+import useSeguidores from '../../hooks/useSeguidores';
 import {
   AlurakutMenu,
   OrkutNostalgicIconSet,
-} from '../src/libs/AlurakutCommons';
-import useCommunities from '../hooks/useCommunities';
+} from '../../src/libs/AlurakutCommons';
+import useCommunities from '../../hooks/useCommunities';
 import slugify from 'slugify';
 import nookies from 'nookies';
 import jwt from 'jsonwebtoken';
-import ProfileSidebar from '../src/components/ProfileSidebar';
-import ProfileRelationsBox from '../src/components/ProfileRelationsBox';
+import ProfileSidebar from '../../src/components/ProfileSidebar';
+import ProfileRelationsBox from '../../src/components/ProfileRelationsBox';
+import { useRouter } from 'next/router';
 
-const Home = ({ githubUser }) => {
-  // const githubUser = 'pablohen';
+const UserPage = () => {
+  const router = useRouter();
+  const { githubUser } = router.query;
+
   const [comunidades, setComunidades] = useCommunities();
 
   const pessoasFavoritas = [
@@ -72,7 +75,7 @@ const Home = ({ githubUser }) => {
 
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
-            <h1 className="title">Bem-vindo(a)</h1>
+            <h1 className="title">Perfil de @{githubUser}</h1>
 
             <OrkutNostalgicIconSet
               recados={12}
@@ -84,34 +87,6 @@ const Home = ({ githubUser }) => {
               legal={2}
               sexy={1}
             />
-          </Box>
-
-          <Box>
-            <h2 className="subTitle">O que você deseja fazer?</h2>
-
-            <form onSubmit={handleCriaComunidade}>
-              <div>
-                <input
-                  type="text"
-                  placeholder="Qual vai ser a sua comunidade?"
-                  name="title"
-                  aria-label="Qual vai ser a sua comunidade?"
-                />
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Coloque uma URL para usarmos de capa"
-                  name="imageUrl"
-                  aria-label="Coloque uma URL para usarmos de capa"
-                />
-              </div>
-
-              <button type="submit" style={{ cursor: 'pointer' }}>
-                Enviar
-              </button>
-            </form>
           </Box>
         </div>
 
@@ -150,7 +125,7 @@ const Home = ({ githubUser }) => {
             <ul>
               {pessoasFavoritas.map((pessoa) => (
                 <li key={pessoa}>
-                  <a href={`https://github.com/${pessoa}`}>
+                  <a href={`/users/${pessoa}`}>
                     <img
                       src={`https://github.com/${pessoa}.png`}
                       alt={pessoa}
@@ -168,43 +143,43 @@ const Home = ({ githubUser }) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
-  const cookies = nookies.get(ctx);
-  const tokenCriptografado = cookies.USER_TOKEN;
-  const tokenDescriptografado = jwt.decode(tokenCriptografado);
+// export const getServerSideProps = async (ctx) => {
+//   const cookies = nookies.get(ctx);
+//   const tokenCriptografado = cookies.USER_TOKEN;
+//   const tokenDescriptografado = jwt.decode(tokenCriptografado);
 
-  try {
-    const res = await fetch('https://alurakut.vercel.app/api/auth', {
-      headers: {
-        Authorization: tokenCriptografado,
-      },
-    });
-    const resJson = await res.json();
-    const { isAuthenticated } = await resJson;
-    console.log(isAuthenticated);
+//   try {
+//     const res = await fetch('https://alurakut.vercel.app/api/auth', {
+//       headers: {
+//         Authorization: tokenCriptografado,
+//       },
+//     });
+//     const resJson = await res.json();
+//     const { isAuthenticated } = await resJson;
+//     console.log(isAuthenticated);
 
-    if (!isAuthenticated) {
-      const data = new Date();
-      const dataFormatada = data.toISOString();
+//     if (!isAuthenticated) {
+//       const data = new Date();
+//       const dataFormatada = data.toISOString();
 
-      return {
-        redirect: {
-          destination: `/login?action=authFailure&date=${dataFormatada}`,
-          permanent: false,
-        },
-      };
-    }
-  } catch (error) {
-    console.log(error.message);
-  }
+//       return {
+//         redirect: {
+//           destination: `/login?action=authFailure&date=${dataFormatada}`,
+//           permanent: false,
+//         },
+//       };
+//     }
+//   } catch (error) {
+//     console.log(error.message);
+//   }
 
-  const { githubUser } = tokenDescriptografado;
+//   const { githubUser } = tokenDescriptografado;
 
-  return {
-    props: {
-      githubUser,
-    },
-  };
-};
+//   return {
+//     props: {
+//       githubUser,
+//     },
+//   };
+// };
 
-export default Home;
+export default UserPage;
