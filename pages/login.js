@@ -5,7 +5,7 @@ import { setCookie } from 'nookies';
 const LoginScreen = () => {
   const router = useRouter();
   const { action, date } = router.query;
-  const [githubUser, setGithubUser] = useState('pablohen');
+  const [githubUser, setGithubUser] = useState('');
 
   useEffect(() => {
     showAction();
@@ -48,7 +48,7 @@ const LoginScreen = () => {
         break;
 
       case 'authFailure':
-        alert('Usuário inválido, tente novamente.');
+        alert('Sessão expirada ou usuário inválido, tente novamente.');
         break;
 
       default:
